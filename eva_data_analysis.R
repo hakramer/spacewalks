@@ -44,8 +44,9 @@ read_json_to_dataframe <- function(json_file) {
 #'
 #' @param input_file Path to a JSON file (character scalar). The file is expected
 #'   to contain a JSON array of objects, e.g. `[{"eva":"1", ...}, {"eva":"2", ...}]`. 
+#'   should contain columns used: date and duration
 #' @param output_file CSV filename to save the output table to
-#' @returns A tibble with one row per JSON record and one column per field, sorted by date.
+#' @returns A dataframe or tibble with one row per JSON record and one column per field, sorted by date.
 #' @export output_file saves the above sorted table as a csv
 #' @examples 
 #' eva_tbl <- update_format_json_dataframe(input_file, output_file)
