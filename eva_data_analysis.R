@@ -18,13 +18,37 @@ library(tidyverse) # ggplot for making fig
 ### functions ###
 #################
 
-# read in json and save as tibble
+
+#' Read EVA data from a JSON file into a tibble
+#'
+#' Reads a JSON file containing an array of records (objects) and returns the
+#' contents as a tibble for downstream analysis.
+#'
+#' @param input_file Path to a JSON file (character scalar). The file is expected
+#'   to contain a JSON array of objects, e.g. `[{"eva":"1", ...}, {"eva":"2", ...}]`.
+#' @return A tibble with one row per JSON record and one column per field.
+#' @examples
+#' eva_tbl <- read_json_to_dataframe("./eva-data.json")
+#' dplyr::glimpse(eva_tbl)
 read_json_to_dataframe <- function(json_file) {
   eva_tbl <- jsonlite::fromJSON(json_file) |> # make input into a table
     as_tibble()
 }
 
-# update the json and add cols and formatting, then save
+
+#' Update the json and add cols and formatting, then save
+#'
+#' Reads a JSON file containing an array of records (objects) and turns it into a tibble, then
+#' updates the tibble by: adding formatting and variable types, remove any rows that don't have a duration or date
+#' ordering by date, adding hours column and populating, calculating cumulative hours, and writing the table to a csv
+#'
+#' @param input_file Path to a JSON file (character scalar). The file is expected
+#'   to contain a JSON array of objects, e.g. `[{"eva":"1", ...}, {"eva":"2", ...}]`. 
+#' @param output_file CSV filename to save the output table to
+#' @returns A tibble with one row per JSON record and one column per field, sorted by date.
+#' @export output_file saves the above sorted table as a csv
+#' @examples 
+#' eva_tbl <- update_format_json_dataframe(input_file, output_file)
 update_format_json_dataframe <- function(input_file,output_file) {
   eva_tbl <- read_json_to_dataframe(input_file)
   eva_tbl <- eva_tbl |> # add formatting to table columns
@@ -49,7 +73,16 @@ update_format_json_dataframe <- function(input_file,output_file) {
   return(eva_tbl)
 }
 
-# Plot cumulative time in space vs. year & save
+#' Plot cumulative time in space vs. year & save
+#'
+#' @param df a dataframe containing 'date' and 'cumulative_time' cumulative time in space
+#' @param graph_file a path to save the plot
+#'
+#' @returns the plot
+#' @export graph_file saves the plot to the 'graph file' filename
+#'
+#' @examples
+#' plot_cumulative_time_in_space(eva_tbl,graph_file)
 plot_cumulative_time_in_space <- function(df, graph_file) {
   p <- ggplot(df, aes(x = date, y = cumulative_time)) +
     geom_point() +
